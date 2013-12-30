@@ -1,0 +1,37 @@
+<div ng-include="'partials/navbar'"></div>
+<div ng-controller="MainCtrl">
+  <div style="padding: 0 0 10px 20px;"></div>
+  <div class="alert-danger" style="padding-left: 30px;">{{error}}</div>
+  <table>
+    <tr>
+      <td>
+        <div class="col-md-2" ng-include="'partials/new'">
+        </div>
+      </td>
+    </tr>
+  </table>
+  <div style="padding-top: 40px;"></div>
+  <table width="100%">
+    <tr>
+      <td>
+        <div class="col-xs-2" ng-include="'partials/filter'">
+        </div>
+      </td>
+      <td>
+        <div class="col-lg-12">
+          <div class="gridStyle" ng-grid="gridOptions"></div>
+        </div>
+      </td>
+    </tr>
+    <tfoot>
+      <td></td>
+      <td>
+        <div style="padding-left: 12px;">
+          <input type="button" class="btn btn-sm btn-warning" ng-click="updateExpenses()" id="expense.update" value="Save Changes"/>
+          <input type="button" class="btn btn-sm btn-danger" ng-click="filter()" id="expense.discard" value="Discard Unsaved Changes"/>
+          <span style="padding-left: 10px">{{updatestatus}}</span>
+        </div>
+      </td>
+    </tfoot>
+  </table>
+</div>

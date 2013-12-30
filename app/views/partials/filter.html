@@ -1,0 +1,76 @@
+<form ng-submit="filter()">
+  <table>
+    <tr>
+      <td>Date</td>
+      <td>
+        <table>
+          <tr>
+            <td>
+              <input type="text" ng-model="filterExp.fromdate" data-date-format="yyyy-mm-dd" bs-datepicker>
+            </td>
+            <td>to</td>
+            <td>
+              <input type="text" ng-model="filterExp.todate" data-date-format="yyyy-mm-dd" bs-datepicker>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>Time</td>
+      <td>
+        <table>
+          <tr>
+            <td>
+              <input type="text" ng-model="filterExp.fromtime" bs-timepicker data-show-meridian="false">
+            </td>
+            <td>to</td>
+            <td>
+              <input type="text" ng-model="filterExp.totime" bs-timepicker data-show-meridian="false" data-default-time=''>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td>Amount</td>
+      <td>
+        <table>
+          <tr>
+            <td>
+              <input type="text" ng-model="filterExp.fromamount"/>
+            </td>
+            <td>to</td>
+            <td>
+              <input type="text" ng-model="filterExp.toamount"/>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>
+        <input type="submit" class="btn btn-sm btn-success" id="filter.submit" value="Filter"/>
+        <input type="button" class="btn btn-sm btn-danger" id="filter.clear" value="Clear Filter" ng-click="clearFilter()"/>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <div class="footer">
+          <div>
+          Total Spent <b>${{total}}</b>
+          <br>
+          </div>
+          <div style="padding-top: 20px">
+          Weekly Avg <b>${{weeklyAvg}}</b>
+          <br>
+          </div>
+          <div style="padding-top: 20px">
+            Daily Avg <b>${{dailyAvg}}</b>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </table>
+</form>

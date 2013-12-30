@@ -1,0 +1,72 @@
+<div class="container" ng-controller="loginCtrl">
+  <div style="padding: 55px 0 30px 0;"></div>
+  <div class="alert-danger" >{{error}}</div><br>
+  <div ng-hide="signup">
+    <form ng-submit="login()">
+        <table>
+          <tr>
+            <td>UserId</td>
+            <td>
+              <input type="text" ng-model="userid" required/>
+            </td>
+          </tr>
+          <tr>
+            <td>Password</td>
+            <td>
+              <input type="password" ng-model="password" required/>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <input type="submit" class="btn btn-sm btn-success" id="submit" value="Login" />
+              <input type="button" class="btn btn-link" id="signup" value="Signup!" ng-click="toggleSignupForm()"/>
+            </td>
+          </tr>
+        </table>
+    </form>
+  </div>
+  <div ng-show="signup">
+    <form ng-submit="createUser()">
+        <table>
+          <tr>
+            <td>UserId</td>
+            <td>
+              <input type="text" ng-model="newuser.userid" required/>
+            </td>
+          </tr>
+          <tr>
+            <td>Password</td>
+            <td>
+              <input type="password" ng-model="newuser.password" required/>
+            </td>
+          </tr>
+          <tr>
+            <td>First Name</td>
+            <td>
+              <input type="text" ng-model="newuser.fname" required/>
+            </td>
+          </tr>
+          <tr>
+            <td>Last Name</td>
+            <td>
+              <input type="text" ng-model="newuser.lname" required/>
+            </td>
+          </tr>
+          <tr>
+            <td>email</td>
+            <td>
+              <input type="text" ng-model="newuser.email" required/>
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <input type="submit" class="btn btn-sm btn-success" id="createuser.submit" value="Submit" />
+              <input type="button" class="btn btn-link" id="signup" value="< Back to Login" ng-click="toggleSignupForm()"/>
+            </td>
+          </tr>
+        </table>
+    </form>
+  </div>
+</div>

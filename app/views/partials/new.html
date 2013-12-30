@@ -1,0 +1,31 @@
+<form ng-submit="createExpense()">
+  <table class="container">
+    <tr>
+      <td>Name</td>
+      <td>
+        <input type="text" ng-model="newexpense.name" required/>
+      </td>
+      <td>Date</td>
+      <td>
+        <input type="text" ng-model="newexpense.date" data-date-format="yyyy-mm-dd" bs-datepicker required>
+      </td>
+      <td>Time</td>
+      <td>
+        <input type="text" ng-model="newexpense.time" bs-timepicker data-show-meridian="false" required>
+      </td>
+    </tr>
+    <tr>
+      <td>Amount</td>
+      <td>
+        <input type="text" ng-model="newexpense.amount" required/>
+      </td>
+      <td>Description</td>
+      <td>
+        <input type="textarea" ng-model="newexpense.description"/>
+      </td>
+      <td>
+        <input type="submit" class="btn btn-sm btn-success" id="newexpense.submit" value="Add & Commit"/>
+      </td>
+    </tr>
+  </table>
+</form>
