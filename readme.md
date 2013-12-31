@@ -11,3 +11,10 @@ Installation Instructions
 * run grunt serve
 * You can login using test users - `user001`/`123` & `user002`/`123`
   New Users can be added using Signup link.
+
+
+Known Issues
+============
+* Angular $digest already in progress error printed in console:
+  - Due to an issue in angular-strap library. Will be fixed in the next build. Please refer: https://github.com/mgcrea/angular-strap/pull/308
+  - However, this error will not affect the functionality.

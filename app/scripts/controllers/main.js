@@ -219,10 +219,10 @@ function updateExpensesFn($scope, $http, $location, UserService) {
           calculateAvg($scope);
           $scope.updatestatus = EXTRAAPP_SAVE_SUCCESSFUL;
           setTimeout(function(){
-            $scope.updatestatus = EXTRAAPP_SAVE_FAILURE;
+            $scope.updatestatus = '';
           }, 1000);
         } else {
-          $scope.updatestatus = EXTRAAPP_ERR_MSG;
+          $scope.updatestatus = EXTRAAPP_SAVE_FAILURE;
         }
     })
     .error(function updateExpensesFnErr(data) {
