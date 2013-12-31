@@ -195,6 +195,7 @@ function createExpenseFn($scope, $http, $location, UserService) {
       .success(function(data) {
         if(data) {
           $scope.newexpense = {};
+          calculateAvg($scope);
         }
         else {
           $scope.error = EXTRAAPP_ERR_MSG;
