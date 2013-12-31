@@ -1,0 +1,19 @@
+{
+  "name": "date-utils",
+  "main": "lib/date-utils.min.js",
+  "ignore": [
+    "package.json",
+    ".gitignore",
+    "test"
+  ],
+  "homepage": "https://github.com/JerrySievert/node-date-utils",
+  "_release": "8f58ea57d8",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "8f58ea57d8df1ac25cce72a610eb8b94ef899429"
+  },
+  "_source": "git://github.com/JerrySievert/node-date-utils.git",
+  "_target": "*",
+  "_originalSource": "date-utils"
+}
