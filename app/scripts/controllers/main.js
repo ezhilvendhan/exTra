@@ -27,16 +27,16 @@ angular.module('extraApp')
   .controller('MainCtrl', ['$scope', '$http',
     '$location', 'UserService',
     function MainCtrlCb($scope, $http, $location, UserService) {
-      initExpGrid($scope);
+      initExpGrid($scope, UserService);
 
       if(!UserService.getUser()) {
         $location.path('/');
       } else {
-        initFilterModel($scope);
+        initFilterModel($scope, UserService);
         initNewExpenseModel($scope);
         $scope.updatestatus = '';
 
-        $scope.expenses = UserService.getUser().expense;
+        $scope.expenses = UserService.getUser().expense.slice();
         calculateAvg($scope);
 
         $scope.filter = filterFn($scope, $http, $location, UserService);
@@ -65,11 +65,13 @@ function loginFn($scope, $http, $location, UserService) {
     user.password = this.password;
     $http.post('/api/users/get', user)
       .success(function(data) {
-        if(data.failure) {
-          $scope.error = data.failure;
-        } else if(data) {
-          UserService.setUser(data);
-          $location.path('/main');
+        if(data) {
+          if(data.failure) {
+            $scope.error = data.failure;
+          } else {
+            UserService.setUser(data);
+            $location.path('/main');
+          }
         }
     })
     .error(function(data) {
@@ -83,11 +85,13 @@ function createUser($scope, $http, $location, UserService) {
     $scope.newuser.expense = [];
     $http.post('/api/users/create', $scope.newuser)
       .success(function(data) {
-        if(data.failure) {
-          $scope.error = data.failure;
-        } else if(data) {
-          UserService.setUser(data);
-          $location.path('/main');
+        if(data) {
+          if(data.failure) {
+            $scope.error = data.failure;
+          } else {
+            UserService.setUser(data);
+            $location.path('/main');
+          }
         }
     })
     .error(function(data) {
@@ -96,9 +100,10 @@ function createUser($scope, $http, $location, UserService) {
   }
 };
 
-function initExpGrid($scope) {
+function initExpGrid($scope, UserService) {
+  $scope.deletedExp = [];
   $scope.deleteExpFn = function deleteExpFn(row) {
-    deleteExpense(row.entity, UserService);
+    deleteExpense(row.entity, $scope);
   };
   $scope.delExpense =
     '<button id="expense.delBtn" type="button" class="btn label label-danger"'+
@@ -123,8 +128,9 @@ function initExpGrid($scope) {
   };
 }
 
-function initFilterModel($scope) {
+function initFilterModel($scope, UserService) {
   $scope.filterExp = {};
+  $scope.filterExp.userid = UserService.getUser().userid;
   $scope.filterExp.fromdate = '';
   $scope.filterExp.todate = '';
   $scope.filterExp.fromtime = '';
@@ -142,11 +148,13 @@ function filterFn($scope, $http, $location, UserService) {
     $http.post('/api/expense/get', $scope.filterExp)
       .success(function(data) {
         if(data) {
-          $scope.expenses = data;
-          calculateAvg($scope);
-        }
-        else {
-          $scope.error = EXTRAAPP_ERR_MSG;
+          if(data.failure) {
+            $scope.error = data.failure;
+          } else {
+            $scope.expenses = data;
+            $scope.deletedExp = [];
+            calculateAvg($scope);
+          }
         }
     })
     .error(function filterFnErr(data) {
@@ -157,13 +165,18 @@ function filterFn($scope, $http, $location, UserService) {
 
 function clearFilterFn($scope, $http, $location, UserService) {
   return function _clearFilterFn() {
-    $http.post('/api/expense/getall')
+    $http.post('/api/expense/getall', UserService.getUser())
       .success(function(data) {
         if(data) {
-          initFilterModel($scope);
-          UserService.getUser().expense = data;
-          $scope.expenses = data;
-          calculateAvg($scope);
+          if(data.failure) {
+            $scope.error = data.failure;
+          } else {
+            initFilterModel($scope, UserService);
+            $scope.deletedExp = [];
+            UserService.getUser().expense = data;
+            $scope.expenses = data.slice();
+            calculateAvg($scope);
+          }
         }
     })
     .error(function clearFilterFnErr(data) {
@@ -191,13 +204,17 @@ function createExpenseFn($scope, $http, $location, UserService) {
       return false;
     }
     user.expense.push($scope.newexpense);
+    $scope.expenses.push($scope.newexpense);
     $http.post('/api/expense/create', user)
       .success(function(data) {
         if(data) {
-          $scope.newexpense = {};
-          calculateAvg($scope);
-        }
-        else {
+          if(data.failure) {
+            $scope.error = data.failure;
+          } else {
+            $scope.newexpense = {};
+            calculateAvg($scope);
+          }
+        } else {
           $scope.error = EXTRAAPP_ERR_MSG;
         }
     })
@@ -209,18 +226,21 @@ function createExpenseFn($scope, $http, $location, UserService) {
 
 function updateExpensesFn($scope, $http, $location, UserService) {
   return function _updateExpensesFn() {
-    var user = updateExpense($scope.expenses, UserService);
+    var user = updateExpense($scope.expenses, UserService, $scope.deletedExp);
     $http.post('/api/expense/update', user)
       .success(function(data) {
-        if(data.failure) {
-          $scope.updatestatus = data.failure;
-        } else if(data) {
-          $scope.expenses = data.expense;
-          calculateAvg($scope);
-          $scope.updatestatus = EXTRAAPP_SAVE_SUCCESSFUL;
-          setTimeout(function(){
-            $scope.updatestatus = '';
-          }, 1000);
+        if(data) {
+          if(data.failure) {
+            $scope.updatestatus = data.failure;
+          } else {
+            //$scope.expenses = data.expense;
+            $scope.deletedExp = [];
+            calculateAvg($scope);
+            $scope.updatestatus = EXTRAAPP_SAVE_SUCCESSFUL;
+            setTimeout(function(){
+              $scope.updatestatus = '';
+            }, 1000);
+          }
         } else {
           $scope.updatestatus = EXTRAAPP_SAVE_FAILURE;
         }
@@ -231,13 +251,12 @@ function updateExpensesFn($scope, $http, $location, UserService) {
   }
 }
 
-function deleteExpense(expenses, UserService) {
-  var user = UserService.getUser(),
-      originalExp = user.expense,
+function deleteExpense(expenses, $scope) {
+  var originalExp = $scope.expenses,
       deleteAnExpense = function deleteAnExpense(ex) {
         originalExp.every(function(original, idx) {
           if(original._id === ex._id) {
-            originalExp.splice(idx, 1);
+            $scope.deletedExp.push(originalExp.splice(idx, 1)[0]);
             return false;
           }
           return true;
@@ -250,10 +269,10 @@ function deleteExpense(expenses, UserService) {
   } else if(expenses){
       deleteAnExpense(expenses);
   }
-  return user;
+  return $scope.expenses;
 }
 
-function updateExpense(expenses, UserService) {
+function updateExpense(updatedExpenses, UserService, deletedExpenses) {
   var user = UserService.getUser(),
       originalExp = user.expense,
       replaceExp = function replaceExp(updated) {
@@ -264,14 +283,32 @@ function updateExpense(expenses, UserService) {
           }
           return true;
         });
+      },
+      _deleteExp = function _deleteExp(delEx) {
+        originalExp.every(function(original, idx) {
+          if(original._id === delEx._id) {
+            debugger;
+            originalExp.splice(idx, 1);
+            return false;
+          }
+          return true;
+        });
       };
-  if(Array.isArray(expenses)) {
-    expenses.forEach(function(updated) {
+  if(Array.isArray(updatedExpenses)) {
+    updatedExpenses.forEach(function(updated) {
       replaceExp(updated);
     })
-  } else if(expenses){
-      replaceExp(expenses);
+  } else if(updatedExpenses){
+      replaceExp(updatedExpenses);
   }
+  if(Array.isArray(deletedExpenses)) {
+    deletedExpenses.forEach(function(delEx) {
+      _deleteExp(delEx);
+    })
+  } else if(deletedExpenses){
+      _deleteExp(deletedExpenses);
+  }
+  debugger;
   return user;
 }
 
