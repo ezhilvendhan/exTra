@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('extraApp')
   .factory('UserService', ['$http', function($http) {
     return {

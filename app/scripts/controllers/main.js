@@ -19,7 +19,7 @@ angular.module('extraApp')
           $scope.error = '';
         };
         $scope.createUser = createUser($scope, $http, $location, UserService);
-    }
+      }
   ]
 );
 
@@ -44,7 +44,9 @@ angular.module('extraApp')
         $scope.createExpense = createExpenseFn($scope, $http, $location, UserService);
         $scope.updateExpenses = updateExpensesFn($scope, $http, $location, UserService);
       }
-}]);
+    }
+  ]
+);
 
 function signout($scope, $http, $location, UserService) {
   $http.post('/api/users/signout', UserService.getUser())
@@ -52,7 +54,8 @@ function signout($scope, $http, $location, UserService) {
       if(data) {
         UserService.setUser(null);
       }
-  })
+    }
+  )
   .error(function signoutErr(data) {
     $scope.error = EXTRAAPP_ERR_MSG;
   });
@@ -77,7 +80,7 @@ function loginFn($scope, $http, $location, UserService) {
     .error(function loginFnError(data) {
       $scope.error = EXTRAAPP_ERR_MSG;
     });
-  }
+  };
 }
 
 function createUser($scope, $http, $location, UserService) {
@@ -98,7 +101,7 @@ function createUser($scope, $http, $location, UserService) {
       $scope.error = EXTRAAPP_ERR_MSG;
     });
   }
-};
+}
 
 function initExpGrid($scope, UserService) {
   $scope.deletedExp = [];
@@ -160,7 +163,7 @@ function filterFn($scope, $http, $location, UserService) {
     .error(function filterFnErr(data) {
       $scope.error = EXTRAAPP_ERR_MSG;
     });
-  }
+  };
 }
 
 function clearFilterFn($scope, $http, $location, UserService) {
@@ -182,7 +185,7 @@ function clearFilterFn($scope, $http, $location, UserService) {
     .error(function clearFilterFnErr(data) {
       $scope.error = EXTRAAPP_ERR_MSG;
     });
-  }
+  };
 }
 
 function initNewExpenseModel($scope) {
@@ -221,7 +224,7 @@ function createExpenseFn($scope, $http, $location, UserService) {
     .error(function createExpenseFnErr(data) {
       $scope.error = EXTRAAPP_ERR_MSG;
     });
-  }
+  };
 }
 
 function updateExpensesFn($scope, $http, $location, UserService) {
@@ -248,7 +251,7 @@ function updateExpensesFn($scope, $http, $location, UserService) {
     .error(function updateExpensesFnErr(data) {
       $scope.updatestatus = EXTRAAPP_ERR_MSG;
     });
-  }
+  };
 }
 
 function deleteExpense(expenses, $scope) {
@@ -265,7 +268,7 @@ function deleteExpense(expenses, $scope) {
   if(Array.isArray(expenses)) {
     expenses.forEach(function expensesDel(ex) {
       deleteAnExpense(ex);
-    })
+    });
   } else if(expenses){
       deleteAnExpense(expenses);
   }
@@ -296,14 +299,14 @@ function updateExpense(updatedExpenses, UserService, deletedExpenses) {
   if(Array.isArray(updatedExpenses)) {
     updatedExpenses.forEach(function updatedExpensesForEach(updated) {
       replaceExp(updated);
-    })
+    });
   } else if(updatedExpenses){
       replaceExp(updatedExpenses);
   }
   if(Array.isArray(deletedExpenses)) {
     deletedExpenses.forEach(function deletedExpensesForEach(delEx) {
       _deleteExp(delEx);
-    })
+    });
   } else if(deletedExpenses){
       _deleteExp(deletedExpenses);
   }
@@ -312,12 +315,16 @@ function updateExpense(updatedExpenses, UserService, deletedExpenses) {
 
 function calculateAvg($scope) {
   var sorted = $scope.expenses.sort(function calculateAvgSort(exp1, exp2) {
-    if(exp1.date < exp2.date) return -1;
-    if(exp1.date > exp2.date) return 1;
+    if(exp1.date < exp2.date) {
+      return -1;
+    }
+    if(exp1.date > exp2.date) {
+      return 1;
+    }
     return 0;
   });
   var getTotalExpense = function getTotalExpense(sorted) {
-    return sorted.reduce(function getTotalExpenseReduce(prev, curr, idx, array) {
+    return sorted.reduce(function getTotalExpenseReduce(prev, curr) {
       return prev + parseFloat(curr.amount);
     }, 0);
   };
@@ -336,7 +343,9 @@ function calculateAvg($scope) {
       $scope.weeklyAvg = (total/weeks).toFixed(2);
       $scope.dailyAvg = (total/days).toFixed(2);
     } else {
-      if(days < 1) days = 1;
+      if(days < 1) {
+        days = 1;
+      }
       $scope.weeklyAvg = (total/days*7).toFixed(2);
       $scope.dailyAvg = (total/days).toFixed(2);
     }
