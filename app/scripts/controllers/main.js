@@ -287,7 +287,6 @@ function updateExpense(updatedExpenses, UserService, deletedExpenses) {
       _deleteExp = function _deleteExp(delEx) {
         originalExp.every(function(original, idx) {
           if(original._id === delEx._id) {
-            debugger;
             originalExp.splice(idx, 1);
             return false;
           }
@@ -308,7 +307,6 @@ function updateExpense(updatedExpenses, UserService, deletedExpenses) {
   } else if(deletedExpenses){
       _deleteExp(deletedExpenses);
   }
-  debugger;
   return user;
 }
 
@@ -323,12 +321,17 @@ function calculateAvg($scope) {
       return prev + parseFloat(curr.amount);
     }, 0);
   };
+  var earliest,
+      latest,
+      days,
+      weeks,
+      total;
   if(sorted.length > 0) {
-    var earliest = new Date(sorted[0].date),
-        latest = new Date(sorted[sorted.length-1].date),
-        days = earliest.getDaysBetween(latest),
-        weeks = Math.round(days/7),
-        total = getTotalExpense(sorted);
+    earliest = new Date(sorted[0].date),
+    latest = new Date(sorted[sorted.length-1].date),
+    days = earliest.getDaysBetween(latest),
+    weeks = Math.round(days/7),
+    total = getTotalExpense(sorted);
     if(weeks > 0) {
       $scope.weeklyAvg = (total/weeks).toFixed(2);
       $scope.dailyAvg = (total/days).toFixed(2);
